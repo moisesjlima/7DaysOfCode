@@ -1,5 +1,8 @@
-﻿using RestSharp;
+﻿using Newtonsoft.Json;
+using PokeApi.Model;
+using RestSharp;
 using System.Net;
+using static System.Console;
 
 namespace PokeApi
 {
@@ -9,13 +12,30 @@ namespace PokeApi
 
         static void Main(string[] args)
         {
+            //var response = GetPokeApi(string.Empty, 100);
             var response = GetPokeApi("pikachu");
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                Console.WriteLine(response.Content);
+                //Console.WriteLine(response.Content);
+
+                var mascot = JsonConvert.DeserializeObject<MascotModel>(response.Content);
+
+                var abilities = mascot.Abilities.Select(x => x._ability.Name);
+
+                WriteLine("----------------------------------------------");
+                WriteLine("Pokemon Name: " + mascot.Name);
+                WriteLine("Height: " + mascot.Height);
+                WriteLine("Weight: " + mascot.Weight);
+
+                WriteLine("Habilidades: ");
+                foreach (string ability in abilities)
+                {
+                    WriteLine(" - " + ability);
+                }
+                WriteLine("----------------------------------------------");
             }
             else
-                Console.WriteLine("Não foi encontrado");
+                WriteLine("Not Found!");
         }
 
         public static RestResponse GetPokeApi(string name, int? id = null)
@@ -41,9 +61,9 @@ namespace PokeApi
 
                 return response;
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
     }
