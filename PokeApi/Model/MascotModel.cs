@@ -46,4 +46,20 @@ namespace PokeApi.Model
         [JsonProperty("url")]
         public string Url { get; set; }
     }
+
+    public class MascotResponseModel
+    {
+        [JsonProperty("results")]
+        public Results[] Results { get; set; }
+    }
+
+    public class Results
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("url")]
+        public string Url { get; set; }
+    }
 }
+
