@@ -62,4 +62,3 @@ namespace PokeApi.Model
         public string Url { get; set; }
     }
 }
-
