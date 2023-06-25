@@ -16,14 +16,17 @@ namespace PokeApi.Model
         [JsonProperty("id")]
         public int Id { get; set; }
 
-        [JsonProperty("is_default")]
-        public bool IsDefault { get; set; }
-
         [JsonProperty("name")]
         public string Name { get; set; }
 
         [JsonProperty("weight")]
         public int Weight { get; set; }
+
+        [JsonProperty("mood")]
+        public string Mood { get; set; }
+
+        [JsonProperty("food_nivel")]
+        public int FoodNivel { get; set; }
     }
 
     public class Ability

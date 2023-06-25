@@ -54,5 +54,16 @@ namespace PokeApi.View
             WriteLine("3 - Return");
         }
 
+        public static void AdoptedMascotDetails(string speciePicked)
+        {
+            WriteLine("\n----------------------------------------------------------");
+            WriteLine(PlayerName + " You Would like:");
+            WriteLine("1 - View " + speciePicked + " mood");
+            WriteLine("2 - Feed " + speciePicked);
+            WriteLine("3 - Have fun with " + speciePicked);
+            WriteLine("4 - View all " + speciePicked + " details");
+            WriteLine("5 - Return");
+        }
+
     }
 }

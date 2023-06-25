@@ -132,6 +132,41 @@ namespace PokeApi.Services
                 foreach (var mascot in Mascots)
                     WriteLine(" - " + mascot.Name);
 
+                WriteLine("Pick one: ");
+                var mascotPicked = ReadLine();
+
+                var havingFun = true;
+
+                while (havingFun)
+                {
+                    Tamagotchi.AdoptedMascotDetails(mascotPicked);
+                    var choice = ReadLine();
+
+                    switch (choice)
+                    {
+                        case "1":
+                            GetMascotMood(mascotPicked);
+                            break;
+                        case "2":
+                            FeedMascot(mascotPicked);
+                            break;
+                        case "3":
+                            WriteLine("Having fun with " + mascotPicked + " =) ...");
+                            break;
+                        case "4":
+                            {
+                                var mascot = GetMascotByName(mascotPicked);
+                                ShowAdoptedMascotDetails(mascot);
+                                break;
+                            }
+                        case "5":
+                            havingFun = false;
+                            break;
+                        default:
+                            WriteLine("Choose one option above");
+                            break;
+                    }
+                }
                 Tamagotchi.Menu();
             }
             else
@@ -139,6 +174,49 @@ namespace PokeApi.Services
                 WriteLine("You don't have any virtual mascot");
                 Tamagotchi.Menu();
             }
+        }
+
+        public static void FeedMascot(string mascotName)
+        {
+            var mascot = GetMascotByName(mascotName);
+            if (mascot != null)
+            {
+                mascot.FoodNivel++;
+                WriteLine($"{mascotName} was feed =)");
+            }
+        }
+
+        public static void GetMascotMood(string mascotName)
+        {
+            var mascot = GetMascotByName(mascotName);
+            if (mascot != null)
+            {
+                if (mascot.FoodNivel <= 2)
+                    mascot.Mood = Enum.PokeMoodEnum.FULLPISTOLA;
+                else if (mascot.FoodNivel <= 4)
+                    mascot.Mood = Enum.PokeMoodEnum.ANGRY;
+                else if (mascot.FoodNivel == 5)
+                    mascot.Mood = Enum.PokeMoodEnum.SAD;
+                else if (mascot.FoodNivel <= 8)
+                    mascot.Mood = Enum.PokeMoodEnum.NORMAL;
+                else
+                    mascot.Mood = Enum.PokeMoodEnum.HAPPY;
+
+                WriteLine("Your mascot is " + mascot.Mood);
+            }
+        }
+
+        private static MascotModel GetMascotByName(string mascotName)
+        {
+            var mascot = Mascots.FirstOrDefault(x => x.Name == mascotName);
+
+            if (mascot == null)
+            {
+                WriteLine($"Mascot {mascotName} not found");
+                return null;
+            }
+
+            return mascot;
         }
 
         public static void ShowMascotDetails(RestResponse response, MascotModel mascot)
@@ -154,7 +232,7 @@ namespace PokeApi.Services
                     WriteLine("Height: " + mascot.Height);
                     WriteLine("Weight: " + mascot.Weight);
 
-                    WriteLine("Abilitie3s: ");
+                    WriteLine("Abilities: ");
                     foreach (string ability in abilities)
                     {
                         WriteLine(" - " + ability);
@@ -163,6 +241,26 @@ namespace PokeApi.Services
                 else
                     WriteLine("Not Found!");
             }
+        }
+
+        public static void ShowAdoptedMascotDetails(MascotModel mascot)
+        {
+            var abilities = mascot.Abilities.Select(x => x._ability.Name);
+
+            WriteLine("----------------------------------------------------------");
+
+            WriteLine("Pokemon Name: " + mascot.Name);
+            WriteLine("Height: " + mascot.Height);
+            WriteLine("Weight: " + mascot.Weight);
+            WriteLine("FoodNivel: " + mascot.FoodNivel);
+            WriteLine("Mood: " + mascot.Mood);
+
+            WriteLine("Abilities: ");
+            foreach (string ability in abilities)
+            {
+                WriteLine(" - " + ability);
+            }
+
         }
 
     }
