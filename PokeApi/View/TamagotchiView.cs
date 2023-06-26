@@ -24,9 +24,9 @@ namespace PokeApi.View
                 WriteLine(word[line]);
             }
             WriteLine();
-            WriteLine("Whats your name: ");
+            WriteLine("What's your name: ");
             PlayerName = ReadLine();
-            WriteLine("Welcome: " + PlayerName);
+            WriteLine("Welcome " + PlayerName + " =)");
 
             Menu();
         }
@@ -39,7 +39,7 @@ namespace PokeApi.View
                 WriteLine("\n----------------------------------------------------------");
 
             Options = 2;
-            WriteLine(PlayerName + " You would like:");
+            WriteLine(PlayerName + " you would like:");
             WriteLine("1 - Adopt virtual mascot");
             WriteLine("2 - Show your mascots");
             WriteLine("3 - Exit");
@@ -48,16 +48,36 @@ namespace PokeApi.View
         public static void AdoptMascot(string speciePicked)
         {
             WriteLine("\n----------------------------------------------------------");
-            WriteLine(PlayerName + " You Would like:");
+            WriteLine(PlayerName + " you would like:");
             WriteLine("1 - View more details about " + speciePicked);
             WriteLine("2 - Adopt " + speciePicked);
             WriteLine("3 - Return");
         }
 
+        public static void printEgg()
+        {
+            string[] egg =
+            {
+             "     ***     ",
+             "  **     **  ",
+             " *         * ",
+             "*           *",
+             " *         * ",
+             "  **     **  ",
+             "     ***     "
+            };
+
+            for (int line = 0; line < egg.Length; line++)
+            {
+                WriteLine(egg[line]);
+            }
+
+        }
+
         public static void AdoptedMascotDetails(string speciePicked)
         {
             WriteLine("\n----------------------------------------------------------");
-            WriteLine(PlayerName + " You Would like:");
+            WriteLine(PlayerName + " you would like:");
             WriteLine("1 - View " + speciePicked + " mood");
             WriteLine("2 - Feed " + speciePicked);
             WriteLine("3 - Have fun with " + speciePicked);

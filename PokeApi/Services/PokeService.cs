@@ -112,6 +112,7 @@ namespace PokeApi.Services
                             else
                             {
                                 Mascots.Add(mascot);
+                                Tamagotchi.printEgg();
                                 WriteLine(Tamagotchi.PlayerName + " Your mascot " + mascot.Name + " was successfully adopted");
                                 Tamagotchi.Menu();
                             }
