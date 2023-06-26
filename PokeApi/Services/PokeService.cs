@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using AutoMapper;
+using Newtonsoft.Json;
 using PokeApi.Model;
+using PokeApi.Model.DTO;
+using PokeApi.Model.DTO.Mapping;
 using PokeApi.View;
 using RestSharp;
 using System.Net;
@@ -10,7 +13,7 @@ namespace PokeApi.Services
     public class PokeService
     {
         public const string API_BASE = "https://pokeapi.co/api/v2/pokemon";
-        public static List<MascotModel> Mascots { get; set; } = new List<MascotModel>();
+        public static List<Mascot> Mascots { get; set; } = new List<Mascot>();
 
         public static RestResponse GetPokeApi(string name, int? id = null, bool getAll = false)
         {
@@ -74,8 +77,11 @@ namespace PokeApi.Services
                     return;
                 }
 
-                var mascot = JsonConvert.DeserializeObject<MascotModel>(response.Content);
+                var mascotModel = JsonConvert.DeserializeObject<MascotModel>(response.Content);
 
+                var config = new MapperConfiguration(cfg => cfg.AddProfile(new MappingMascot()));
+                IMapper mapper = config.CreateMapper();
+                var mascot = mapper.Map<Mascot>(mascotModel);
 
                 Tamagotchi.AdoptMascot(speciePicked);
                 var choice = ReadLine();
@@ -84,7 +90,7 @@ namespace PokeApi.Services
                 {
                     case "1":
                         {
-                            ShowMascotDetails(response, mascot);
+                            ShowMascotDetails(response, mascotModel);
                             Tamagotchi.Menu();
                             break;
                         }
@@ -195,7 +201,7 @@ namespace PokeApi.Services
                     mascot.Mood = Enum.PokeMoodEnum.FULLPISTOLA;
                 else if (mascot.FoodNivel <= 4)
                     mascot.Mood = Enum.PokeMoodEnum.ANGRY;
-                else if (mascot.FoodNivel == 5)
+                else if (mascot.FoodNivel <= 6)
                     mascot.Mood = Enum.PokeMoodEnum.SAD;
                 else if (mascot.FoodNivel <= 8)
                     mascot.Mood = Enum.PokeMoodEnum.NORMAL;
@@ -206,7 +212,7 @@ namespace PokeApi.Services
             }
         }
 
-        private static MascotModel GetMascotByName(string mascotName)
+        private static Mascot GetMascotByName(string mascotName)
         {
             var mascot = Mascots.FirstOrDefault(x => x.Name == mascotName);
 
@@ -243,7 +249,7 @@ namespace PokeApi.Services
             }
         }
 
-        public static void ShowAdoptedMascotDetails(MascotModel mascot)
+        public static void ShowAdoptedMascotDetails(Mascot mascot)
         {
             var abilities = mascot.Abilities.Select(x => x._ability.Name);
 
@@ -262,6 +268,5 @@ namespace PokeApi.Services
             }
 
         }
-
     }
 }
