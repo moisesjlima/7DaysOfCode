@@ -10,7 +10,7 @@ namespace PokeApi.Controller
             Tamagotchi.PrintTamagotchi();
             bool keepGame = true;
 
-            while (keepGame)
+            do
             {
                 var choice = Console.ReadLine();
 
@@ -30,7 +30,7 @@ namespace PokeApi.Controller
                         Console.WriteLine("Choose one of the options above");
                         break;
                 }
-            }
+            } while (keepGame);
         }
 
     }

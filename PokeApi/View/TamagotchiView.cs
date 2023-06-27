@@ -5,7 +5,6 @@ namespace PokeApi.View
     public class Tamagotchi
     {
         public static string PlayerName { get; set; }
-        public static int Options { get; set; } = 1;
 
         public static void PrintTamagotchi()
         {
@@ -33,12 +32,8 @@ namespace PokeApi.View
 
         public static void Menu()
         {
-            if (Options == 1)
-                WriteLine("\n-------------------------- MENU --------------------------");
-            else
-                WriteLine("\n----------------------------------------------------------");
+            WriteLine("\n-------------------------- MENU --------------------------");
 
-            Options = 2;
             WriteLine(PlayerName + " you would like:");
             WriteLine("1 - Adopt virtual mascot");
             WriteLine("2 - Show your mascots");
@@ -71,7 +66,6 @@ namespace PokeApi.View
             {
                 WriteLine(egg[line]);
             }
-
         }
 
         public static void AdoptedMascotDetails(string speciePicked)

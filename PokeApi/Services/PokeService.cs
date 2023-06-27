@@ -48,137 +48,162 @@ namespace PokeApi.Services
                     return response;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                WriteLine("Something went wrong, please try again!");
+                Tamagotchi.Menu();
+                return null;
             }
         }
 
         public static void AdoptMascot()
         {
-            var GetSpecies = GetPokeApi(string.Empty, null, true);
-            if (GetSpecies.StatusCode == HttpStatusCode.OK)
+            try
             {
-                var mascots = JsonConvert.DeserializeObject<MascotResponseModel>(GetSpecies.Content);
-                WriteLine("Pick a specie: ");
-
-                foreach (var result in mascots.Results)
+                var GetSpecies = GetPokeApi(string.Empty, null, true);
+                if (GetSpecies.StatusCode == HttpStatusCode.OK)
                 {
-                    WriteLine(" - " + result.Name);
-                }
-                var speciePicked = ReadLine();
+                    var mascots = JsonConvert.DeserializeObject<MascotResponseModel>(GetSpecies.Content);
+                    WriteLine("Pick a specie: ");
 
-                var response = GetPokeApi(speciePicked);
+                    foreach (var result in mascots.Results)
+                    {
+                        WriteLine(" - " + result.Name);
+                    }
+                    var speciePicked = ReadLine();
 
-                if (response.StatusCode != HttpStatusCode.OK || response == null)
-                {
-                    WriteLine("Mascot not found, choose one of above");
-                    Tamagotchi.Menu();
-                    return;
-                }
+                    var response = GetPokeApi(speciePicked);
 
-                var mascotModel = JsonConvert.DeserializeObject<MascotModel>(response.Content);
-
-                var config = new MapperConfiguration(cfg => cfg.AddProfile(new MappingMascot()));
-                IMapper mapper = config.CreateMapper();
-                var mascot = mapper.Map<Mascot>(mascotModel);
-
-                Tamagotchi.AdoptMascot(speciePicked);
-                var choice = ReadLine();
-
-                switch (choice)
-                {
-                    case "1":
-                        {
-                            ShowMascotDetails(response, mascotModel);
-                            Tamagotchi.Menu();
-                            break;
-                        }
-                    case "2":
-                        {
-                            if (Mascots.Any())
-                            {
-                                if (Mascots.Any(x => x.Name == mascot.Name))
-                                {
-                                    WriteLine("You already have this mascot");
-                                }
-                                else
-                                {
-                                    Mascots.Add(mascot);
-                                    WriteLine(Tamagotchi.PlayerName + " Your mascot " + mascot.Name + " was successfully adopted");
-                                }
-                                Tamagotchi.Menu();
-                            }
-                            else
-                            {
-                                Mascots.Add(mascot);
-                                Tamagotchi.printEgg();
-                                WriteLine(Tamagotchi.PlayerName + " Your mascot " + mascot.Name + " was successfully adopted");
-                                Tamagotchi.Menu();
-                            }
-                            break;
-                        }
-                    case "3":
+                    if (response.StatusCode != HttpStatusCode.OK || response == null)
+                    {
+                        WriteLine("Mascot not found, choose one of above");
                         Tamagotchi.Menu();
-                        break;
-                    default:
-                        WriteLine("Choose one of the options above");
-                        Tamagotchi.Menu();
-                        break;
-                }
-            }
-            else
-                WriteLine("Not Found!");
-        }
+                        return;
+                    }
 
-        public static void ShowMascots()
-        {
-            if (Mascots.Any())
-            {
-                WriteLine("Your mascots:");
-                foreach (var mascot in Mascots)
-                    WriteLine(" - " + mascot.Name);
+                    var mascotModel = JsonConvert.DeserializeObject<MascotModel>(response.Content);
 
-                WriteLine("Pick one: ");
-                var mascotPicked = ReadLine();
+                    var config = new MapperConfiguration(cfg => cfg.AddProfile(new MappingMascot()));
+                    IMapper mapper = config.CreateMapper();
+                    var mascot = mapper.Map<Mascot>(mascotModel);
 
-                var havingFun = true;
-
-                while (havingFun)
-                {
-                    Tamagotchi.AdoptedMascotDetails(mascotPicked);
+                    Tamagotchi.AdoptMascot(speciePicked);
                     var choice = ReadLine();
 
                     switch (choice)
                     {
                         case "1":
-                            GetMascotMood(mascotPicked);
-                            break;
-                        case "2":
-                            FeedMascot(mascotPicked);
-                            break;
-                        case "3":
-                            WriteLine("Having fun with " + mascotPicked + " =) ...");
-                            break;
-                        case "4":
                             {
-                                var mascot = GetMascotByName(mascotPicked);
-                                ShowAdoptedMascotDetails(mascot);
+                                ShowMascotDetails(response, mascotModel);
+                                Tamagotchi.Menu();
                                 break;
                             }
-                        case "5":
-                            havingFun = false;
+                        case "2":
+                            {
+                                if (Mascots.Any())
+                                {
+                                    if (Mascots.Any(x => x.Name == mascot.Name))
+                                    {
+                                        WriteLine("You already have this mascot");
+                                    }
+                                    else
+                                    {
+                                        Mascots.Add(mascot);
+                                        Tamagotchi.printEgg();
+                                        WriteLine(Tamagotchi.PlayerName + " Your mascot " + mascot.Name + " was successfully adopted");
+                                    }
+                                    Tamagotchi.Menu();
+                                }
+                                else
+                                {
+                                    Mascots.Add(mascot);
+                                    Tamagotchi.printEgg();
+                                    WriteLine(Tamagotchi.PlayerName + " Your mascot " + mascot.Name + " was successfully adopted");
+                                    Tamagotchi.Menu();
+                                }
+                                break;
+                            }
+                        case "3":
+                            Tamagotchi.Menu();
                             break;
                         default:
-                            WriteLine("Choose one option above");
+                            WriteLine("Choose one of the options above");
+                            Tamagotchi.Menu();
                             break;
                     }
                 }
+                else
+                    WriteLine("Not Found!");
+            }
+            catch
+            {
+                WriteLine("Something went wrong, please try again!");
                 Tamagotchi.Menu();
             }
-            else
+        }
+
+        public static void ShowMascots()
+        {
+            try
             {
-                WriteLine("You don't have any virtual mascot");
+                if (Mascots.Any())
+                {
+                    WriteLine("Your mascots:");
+                    foreach (var mascot in Mascots)
+                        WriteLine(" - " + mascot.Name);
+
+                    WriteLine("Pick one: ");
+                    var mascotPicked = ReadLine();
+
+                    var hasMascot = GetMascotByName(mascotPicked);
+                    if (hasMascot == null)
+                    {
+                        Tamagotchi.Menu();
+                        return;
+                    }
+
+                    var havingFun = true;
+
+                    while (havingFun)
+                    {
+                        Tamagotchi.AdoptedMascotDetails(mascotPicked);
+                        var choice = ReadLine();
+
+                        switch (choice)
+                        {
+                            case "1":
+                                GetMascotMood(mascotPicked);
+                                break;
+                            case "2":
+                                FeedMascot(mascotPicked);
+                                break;
+                            case "3":
+                                WriteLine("Having fun with " + mascotPicked + " =) ...");
+                                break;
+                            case "4":
+                                {
+                                    var mascot = GetMascotByName(mascotPicked);
+                                    ShowAdoptedMascotDetails(mascot);
+                                    break;
+                                }
+                            case "5":
+                                havingFun = false;
+                                break;
+                            default:
+                                WriteLine("Choose one of the options above");
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    WriteLine("You don't have any virtual mascot");
+                }
+                Tamagotchi.Menu();
+            }
+            catch
+            {
+                WriteLine("Something went wrong, please try again!");
                 Tamagotchi.Menu();
             }
         }
@@ -229,43 +254,59 @@ namespace PokeApi.Services
         public static void ShowMascotDetails(RestResponse response, MascotModel mascot)
         {
             {
-                if (response.StatusCode == HttpStatusCode.OK)
+                try
                 {
-                    var abilities = mascot.Abilities.Select(x => x._ability.Name);
-
-                    WriteLine("----------------------------------------------------------");
-
-                    WriteLine("Pokemon Name: " + mascot.Name);
-                    WriteLine("Height: " + mascot.Height);
-                    WriteLine("Weight: " + mascot.Weight);
-
-                    WriteLine("Abilities: ");
-                    foreach (string ability in abilities)
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        WriteLine(" - " + ability);
+                        var abilities = mascot.Abilities.Select(x => x._ability.Name);
+
+                        WriteLine("----------------------------------------------------------");
+
+                        WriteLine("Pokemon Name: " + mascot.Name);
+                        WriteLine("Height: " + mascot.Height);
+                        WriteLine("Weight: " + mascot.Weight);
+
+                        WriteLine("Abilities: ");
+                        foreach (string ability in abilities)
+                        {
+                            WriteLine(" - " + ability);
+                        }
                     }
+                    else
+                        WriteLine("Not Found!");
                 }
-                else
-                    WriteLine("Not Found!");
+                catch
+                {
+                    WriteLine("Something went wrong, please try again!");
+                    Tamagotchi.Menu();
+                }
             }
         }
 
         public static void ShowAdoptedMascotDetails(Mascot mascot)
         {
-            var abilities = mascot.Abilities.Select(x => x._ability.Name);
-
-            WriteLine("----------------------------------------------------------");
-
-            WriteLine("Pokemon Name: " + mascot.Name);
-            WriteLine("Height: " + mascot.Height);
-            WriteLine("Weight: " + mascot.Weight);
-            WriteLine("FoodNivel: " + mascot.FoodNivel);
-            WriteLine("Mood: " + mascot.Mood);
-
-            WriteLine("Abilities: ");
-            foreach (string ability in abilities)
+            try
             {
-                WriteLine(" - " + ability);
+                var abilities = mascot.Abilities.Select(x => x._ability.Name);
+
+                WriteLine("----------------------------------------------------------");
+
+                WriteLine("Pokemon Name: " + mascot.Name);
+                WriteLine("Height: " + mascot.Height);
+                WriteLine("Weight: " + mascot.Weight);
+                WriteLine("FoodNivel: " + mascot.FoodNivel);
+                WriteLine("Mood: " + mascot.Mood);
+
+                WriteLine("Abilities: ");
+                foreach (string ability in abilities)
+                {
+                    WriteLine(" - " + ability);
+                }
+            }
+            catch
+            {
+                WriteLine("Something went wrong, please try again!");
+                Tamagotchi.Menu();
             }
 
         }
